@@ -4,18 +4,13 @@ import com.java.habit_tracker.ApplicationContextHolder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Component
 public class MainController {
-
-    @FXML
-    private BorderPane mainPane;
 
     @FXML
     private Pane mainContent;
@@ -28,11 +23,6 @@ public class MainController {
     @FXML
     private void showManageHabits() throws IOException {
         loadView("fxml/Habit.fxml");
-    }
-
-    @FXML
-    private void showSettings() throws IOException {
-        loadView("fxml/Settings.fxml");
     }
 
     private void loadView(String fxmlPath) throws IOException {

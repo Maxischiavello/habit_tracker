@@ -39,10 +39,14 @@ public class HabitController implements Initializable {
     @FXML
     private Button deleteButton;
 
+    @FXML
+    private Button updateButton;
+
+    private Habit selectedHabit;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         loadHabits();
-        habitListView.setOnMouseClicked(this::handleHabitSelection);
     }
 
     @FXML
@@ -65,14 +69,26 @@ public class HabitController implements Initializable {
 
     @FXML
     private void deleteHabit() {
-        String selectedHabitName = habitListView.getSelectionModel().getSelectedItem();
-        if (selectedHabitName != null) {
-            habitService.getAllHabits().stream()
-                    .filter(habit -> habit.getName().equals(selectedHabitName))
-                    .findFirst()
-                    .ifPresent(habit -> habitService.deleteHabit(habit.getId()));
-            habitListView.getItems().remove(selectedHabitName);
+        if (selectedHabit != null) {
+            habitService.deleteHabit(selectedHabit.getId());
+            habitListView.getItems().remove(selectedHabit.getName());
             deleteButton.setDisable(true);
+            updateButton.setDisable(true);
+            clearFields();
+        }
+    }
+
+    @FXML
+    private void updateHabit() {
+        if (selectedHabit != null) {
+            selectedHabit.setName(nameTextField.getText());
+            selectedHabit.setCategory(categoryTextField.getText());
+            selectedHabit.setDescription(descriptionTextField.getText());
+            selectedHabit.setActive(activeCheckBox.isSelected());
+
+            habitService.updateHabit(selectedHabit);
+            loadHabits();
+            clearFields();
         }
     }
 
@@ -86,10 +102,27 @@ public class HabitController implements Initializable {
         categoryTextField.clear();
         descriptionTextField.clear();
         activeCheckBox.setSelected(false);
+        selectedHabit = null;
     }
 
+    @FXML
     private void handleHabitSelection(MouseEvent event) {
-        String selectedHabit = habitListView.getSelectionModel().getSelectedItem();
-        deleteButton.setDisable(selectedHabit == null);
+        String selectedHabitName = habitListView.getSelectionModel().getSelectedItem();
+        if (selectedHabitName != null) {
+            selectedHabit = habitService.getAllHabits().stream()
+                    .filter(habit -> habit.getName().equals(selectedHabitName))
+                    .findFirst()
+                    .orElse(null);
+
+            if (selectedHabit != null) {
+                nameTextField.setText(selectedHabit.getName());
+                categoryTextField.setText(selectedHabit.getCategory());
+                descriptionTextField.setText(selectedHabit.getDescription());
+                activeCheckBox.setSelected(selectedHabit.isActive());
+
+                deleteButton.setDisable(false);
+                updateButton.setDisable(false);
+            }
+        }
     }
 }

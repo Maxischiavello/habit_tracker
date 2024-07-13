@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.geometry.Pos?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -27,7 +26,8 @@
     </GridPane>
     <HBox spacing="10" alignment="CENTER">
         <Button text="Add Habit" onAction="#addHabit"/>
+        <Button text="Update Habit" onAction="#updateHabit" fx:id="updateButton" disable="true"/>
         <Button text="Delete Habit" onAction="#deleteHabit" fx:id="deleteButton" disable="true"/>
     </HBox>
-    <ListView fx:id="habitListView" VBox.vgrow="ALWAYS" prefWidth="300" prefHeight="200"/>
+    <ListView fx:id="habitListView" VBox.vgrow="ALWAYS" prefWidth="300" prefHeight="200" onMouseClicked="#handleHabitSelection"/>
 </VBox>
