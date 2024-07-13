@@ -4,9 +4,11 @@ import com.java.habit_tracker.models.Habit;
 import com.java.habit_tracker.services.HabitService;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,9 +36,13 @@ public class HabitController implements Initializable {
     @FXML
     private ListView<String> habitListView;
 
+    @FXML
+    private Button deleteButton;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         loadHabits();
+        habitListView.setOnMouseClicked(this::handleHabitSelection);
     }
 
     @FXML
@@ -57,6 +63,19 @@ public class HabitController implements Initializable {
         clearFields();
     }
 
+    @FXML
+    private void deleteHabit() {
+        String selectedHabitName = habitListView.getSelectionModel().getSelectedItem();
+        if (selectedHabitName != null) {
+            habitService.getAllHabits().stream()
+                    .filter(habit -> habit.getName().equals(selectedHabitName))
+                    .findFirst()
+                    .ifPresent(habit -> habitService.deleteHabit(habit.getId()));
+            habitListView.getItems().remove(selectedHabitName);
+            deleteButton.setDisable(true);
+        }
+    }
+
     private void loadHabits() {
         habitListView.getItems().clear();
         habitService.getAllHabits().forEach(habit -> habitListView.getItems().add(habit.getName()));
@@ -67,5 +86,10 @@ public class HabitController implements Initializable {
         categoryTextField.clear();
         descriptionTextField.clear();
         activeCheckBox.setSelected(false);
+    }
+
+    private void handleHabitSelection(MouseEvent event) {
+        String selectedHabit = habitListView.getSelectionModel().getSelectedItem();
+        deleteButton.setDisable(selectedHabit == null);
     }
 }

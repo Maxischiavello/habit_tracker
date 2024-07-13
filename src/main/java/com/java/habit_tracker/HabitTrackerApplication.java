@@ -1,5 +1,6 @@
 package com.java.habit_tracker;
 
+import com.java.habit_tracker.controllers.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -31,10 +32,20 @@ public class HabitTrackerApplication extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		Scene scene = new Scene(root, 800, 600);  // Establece el tamaño inicial de la ventana a 800x600
+		Scene scene = new Scene(root, 300, 500);
 		primaryStage.setScene(scene);
+		primaryStage.centerOnScreen();
+		primaryStage.setResizable(false);
 		primaryStage.setTitle("Habit Tracker");
 		primaryStage.show();
+
+		// Load the dashboard view by default
+		MainController mainController = springContext.getBean(MainController.class);
+		try {
+			mainController.showDashboard();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

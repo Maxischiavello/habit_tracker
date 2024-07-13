@@ -6,14 +6,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.control.CheckBox;
+import javafx.geometry.Pos;
+import javafx.scene.layout.Priority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 @Component
 public class DashboardController implements Initializable {
@@ -22,34 +25,63 @@ public class DashboardController implements Initializable {
     private HabitService habitService;
 
     @FXML
-    private ListView<String> todayHabitsListView;
+    private Label totalHabitsCompleted;
 
     @FXML
-    private Label completedHabitsLabel;
+    private Label overallCompletionRate;
 
     @FXML
-    private Label completionPercentageLabel;
+    private TextField searchField;
+
+    @FXML
+    private ListView<HBox> habitListView;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        loadTodayHabits();
-        loadQuickStats();
+        loadHabits();
+        updateStatistics();
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> loadHabits());
     }
 
-    private void loadTodayHabits() {
-        List<Habit> allHabits = habitService.getAllHabits();
-        List<String> todayHabits = allHabits.stream()
-                .map(Habit::getName)
+    private void loadHabits() {
+        habitListView.getItems().clear();
+        String searchText = searchField.getText().toLowerCase();
+        List<Habit> habits = habitService.getAllHabits().stream()
+                .filter(habit -> habit.getName().toLowerCase().contains(searchText))
                 .toList();
-        todayHabitsListView.getItems().addAll(todayHabits);
+
+        for (Habit habit : habits) {
+            HBox habitBox = new HBox(10);
+            habitBox.setAlignment(Pos.CENTER_LEFT);
+
+            CheckBox habitCheckBox = new CheckBox(habit.getName());
+            habitCheckBox.setSelected(habit.isCompletedToday());
+
+            habitCheckBox.setOnAction(event -> {
+                habit.setCompletedToday(habitCheckBox.isSelected());
+                habitService.updateHabit(habit);
+                updateStatistics();
+            });
+
+            Label completionRateLabel = new Label(String.format("%.2f%%", habit.getWeeklyCompletionRate()));
+            HBox.setHgrow(completionRateLabel, Priority.ALWAYS);
+            completionRateLabel.setMaxWidth(Double.MAX_VALUE);
+            completionRateLabel.setAlignment(Pos.CENTER_RIGHT);
+
+            habitBox.getChildren().addAll(habitCheckBox, completionRateLabel);
+            habitListView.getItems().add(habitBox);
+        }
     }
 
-    private void loadQuickStats() {
-        List<Habit> allHabits = habitService.getAllHabits();
-        long completedHabits = allHabits.stream().filter(Habit::isActive).count();
-        double completionPercentage = (double) completedHabits / allHabits.size() * 100;
+    private void updateStatistics() {
+        List<Habit> habits = habitService.getAllHabits();
+        long completedToday = habits.stream().filter(Habit::isCompletedToday).count();
+        double overallCompletionRateValue = habits.stream()
+                .mapToDouble(Habit::getWeeklyCompletionRate)
+                .average()
+                .orElse(0.0);
 
-        completedHabitsLabel.setText("Habits Completed: " + completedHabits);
-        completionPercentageLabel.setText(String.format("Completion Percentage: %.2f%%", completionPercentage));
+        totalHabitsCompleted.setText(String.valueOf(completedToday));
+        overallCompletionRate.setText(String.format("%.2f%%", overallCompletionRateValue));
     }
 }
