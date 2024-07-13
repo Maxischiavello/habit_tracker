@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.java.habit_tracker.controllers.DashboardController" spacing="10" alignment="CENTER">
+    <Label text="Dashboard" style="-fx-font-size: 24px;"/>
+    <VBox spacing="5">
+        <Label text="Habits for Today" style="-fx-font-size: 18px;"/>
+        <ListView fx:id="todayHabitsListView" />
+    </VBox>
+    <VBox spacing="5">
+        <Label text="Quick Stats" style="-fx-font-size: 18px;"/>
+        <Label fx:id="completedHabitsLabel" text="Habits Completed: 0"/>
+        <Label fx:id="completionPercentageLabel" text="Completion Percentage: 0%"/>
+    </VBox>
+</VBox>

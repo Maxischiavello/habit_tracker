@@ -1,4 +1,4 @@
-package com.java.habit_tracker;
+package com.java.habit_tracker.models;
 
 import jakarta.persistence.*;
 import lombok.Data;

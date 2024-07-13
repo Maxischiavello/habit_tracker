@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.java.habit_tracker.controllers.MainController">
+    <top>
+        <MenuBar>
+            <Menu text="File">
+                <MenuItem text="Exit" onAction="#handleExit"/>
+            </Menu>
+            <Menu text="View">
+                <MenuItem text="Dashboard" onAction="#showDashboard"/>
+                <MenuItem text="Manage Habits" onAction="#showManageHabits"/>
+                <MenuItem text="Settings" onAction="#showSettings"/>
+            </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <Pane fx:id="mainContent"/>
+    </center>
+</BorderPane>

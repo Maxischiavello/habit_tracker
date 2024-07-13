@@ -1,5 +1,6 @@
-package com.java.habit_tracker;
+package com.java.habit_tracker.models;
 
+import com.java.habit_tracker.models.Habit;
 import lombok.Data;
 import jakarta.persistence.*;
 import java.time.LocalDate;

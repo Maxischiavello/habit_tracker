@@ -1,5 +1,7 @@
-package com.java.habit_tracker;
+package com.java.habit_tracker.services;
 
+import com.java.habit_tracker.models.Habit;
+import com.java.habit_tracker.repositories.HabitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;

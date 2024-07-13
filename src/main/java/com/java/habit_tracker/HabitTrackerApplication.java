@@ -3,28 +3,42 @@ package com.java.habit_tracker;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
-@SpringBootApplication
+import java.io.IOException;
+
+@SpringBootApplication(scanBasePackages = "com.java.habit_tracker")
 public class HabitTrackerApplication extends Application {
 
+	private ConfigurableApplicationContext springContext;
+	private BorderPane root;
+
 	public static void main(String[] args) {
-		System.out.println("AHI VA LA CONCHA DE TU MADRE");
-		launch();
+		launch(args);
 	}
 
 	@Override
-	public void start(Stage stage) throws Exception {
-		var context = SpringApplication.run(HabitTrackerApplication.class);
-		var fxml = new FXMLLoader(getClass().getResource("/Main.fxml"));
+	public void init() throws IOException {
+		springContext = SpringApplication.run(HabitTrackerApplication.class);
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"));
+		loader.setControllerFactory(springContext::getBean);
+		root = loader.load();
+	}
 
-		String title = context.getBean("title", String.class);
-		var scene = new Scene(fxml.load());
+	@Override
+	public void start(Stage primaryStage) {
+		Scene scene = new Scene(root, 800, 600);  // Establece el tamaño inicial de la ventana a 800x600
+		primaryStage.setScene(scene);
+		primaryStage.setTitle("Habit Tracker");
+		primaryStage.show();
+	}
 
-		stage.setTitle(title);
-		stage.setScene(scene);
-		stage.show();
+	@Override
+	public void stop() {
+		springContext.close();
 	}
 }
